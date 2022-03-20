@@ -1,0 +1,211 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>Users
+      <div class="filter-heading">
+        <form [formGroup]="filter_form">
+          <input type="text" (keyup)="onSearch($event)" class="form-control" placeholder="search..."
+            formControlName="q">
+        </form>
+      </div>
+    </h1>
+    <hr />
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <div class="top-buttons">
+      <a (click)="onAdd(data_popup)" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
+    </div>
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Display Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Status</th>
+          <th scope="col" width="1%">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data">
+          <td (click)="onViewUser(item)">{{item.first_name}} {{item.last_name}}</td>
+          <td (click)="onViewUser(item)">{{item.display_name}}</td>
+          <td (click)="onViewUser(item)">{{item.email}}</td>
+          <td (click)="onViewUser(item)"><span class="badge"
+              [ngClass]="item.status==1?'badge-success':'badge-secondary'">{{item.status==1?"Active":"Inactive"}}</span>
+          </td>
+          <td>
+
+
+            <a placement="top" ngbTooltip="Edit" class="edit-link text-primary" (click)="onSelect(item,data_popup)"><i
+                class="fas fa-pencil-alt"></i></a>
+            <a placement="top" ngbTooltip="Delete" class="text-danger btn_delete"
+              (click)="deleteItem(item,delete_popup)"><i class="fas fa-trash-alt"></i> </a>
+
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+    <div class="pager" *ngIf="data">
+      <div *ngIf="onProgress" class="data-loader">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span class="lbl">Loading...</span>
+      </div>
+      <a class="btn btn-light more" *ngIf="!onProgress && !isMaxLoad" (click)="onLoadMore()">Load More</a>
+    </div>
+    <!--end of pager-->
+  </div>
+</div>
+
+
+<ng-template #data_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{method=="add"?"Add":"Edit"}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert *ngIf="coreService.showAlert" [type]="coreService.alert.type" (close)="coreService.closeAlert()">
+      {{ coreService.alert.message }}</ngb-alert>
+
+    <form [formGroup]="data_form" class="form_data">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="status">User Type <span class="req">*</span>
+            </label>
+            <select formControlName="user_type" class="form-control">
+              <option value="">--Select--</option>
+              <option value="3">Operator</option>
+              <option value="2">User</option>
+              <option value="1">Admin</option>
+            </select>
+            <p *ngIf="!data_form.get('user_type').valid && data_form.get('user_type').touched" class="help-block error">User type
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="first_name">First Name <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="first_name" class="form-control" />
+            <p *ngIf="!data_form.get('first_name').valid && data_form.get('first_name').touched"
+              class="help-block error">First Name
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name">Last Name <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="last_name" class="form-control" />
+            <p *ngIf="!data_form.get('last_name').valid && data_form.get('last_name').touched" class="help-block error">
+              Last Name
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="display_name">Display Name <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="display_name" class="form-control" />
+            <p *ngIf="!data_form.get('display_name').valid && data_form.get('display_name').touched"
+              class="help-block error">Display Name
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+        <!--end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="email">Email <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="email" class="form-control" />
+            <p *ngIf="!data_form.get('email').valid && data_form.get('email').touched" class="help-block error">Email
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+        <!--end-->
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="status">Status <span class="req">*</span>
+            </label>
+            <select formControlName="status" class="form-control">
+              <option value="">--Select--</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+            <p *ngIf="!data_form.get('status').valid && data_form.get('status').touched" class="help-block error">Status
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+
+        <div class="col-md-6" *ngIf="method=='add'">
+          <div class="form-group">
+            <label for="password">Assign Password
+            </label>
+            <input type="password" formControlName="password" class="form-control">
+            <p *ngIf="!data_form.get('password').valid && data_form.get('password').touched" class="help-block error">
+              Password
+              is required</p>
+          </div>
+          <!--end-->
+        </div>
+        <!--end-->
+
+      </div>
+      <!--end-->
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="onProgress || !data_form.valid" type="button" class="btn btn-primary" (click)="onSave()">
+      <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+      {{onProgress?"Saving...":"Save"}}
+    </button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #delete_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Delete Confirmation</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Do you really want to remove?
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="onProgress" type="button" class="btn btn-secondary" (click)="onCancel()">
+
+      No
+    </button>
+    <button [disabled]="onProgress" type="button" class="btn btn-primary" (click)="onDelete()">
+      <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+      {{onProgress?"Removing...":"Yes"}}
+    </button>
+  </div>
+</ng-template>

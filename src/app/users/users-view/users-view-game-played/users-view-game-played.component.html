@@ -1,0 +1,56 @@
+<div *ngIf="!selectedGameTable" class="row" style="margin-bottom:15px;">
+    <div class="col-md-12">
+        <a (click)="loadData()" class="btn btn-warning btn-reload"><i class="fas fa-sync-alt"></i> Reload</a>
+    </div>
+</div>
+<div *ngIf="!selectedGameTable" class="row">
+    <div class="col-md-6">
+        <div class="box-o">
+            <h3>{{total_lose | number}}</h3>
+            <span>Total Lose</span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="box-o">
+            <h3>{{total_win | number}}</h3>
+            <span>Total Win</span>
+        </div>
+    </div>
+</div>
+<!--end-->
+<div *ngIf="!selectedGameTable" class="row">
+    <div class="col-md-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" width="10%">Home</th>
+                    <th scope="col" width="10%">Away</th>
+                    <th scope="col" width="15%">Home Score</th>
+                    <th scope="col" width="15%">Away Score</th>
+              
+                    <th scope="col" width="15%">Total Lose</th>
+                    <th scope="col" width="15%">Total Wins</th>
+                    <th scope="col" width="20%">Date</th>
+                    <th scope="col" width="20%">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let item of data" (click)="onSelectGame(item)">
+                    <td>{{item.games.HomeTeam}}</td>
+                    <td>{{item.games.AwayTeam}}</td>
+                    <td>{{item.games.HomeTeamRuns}}</td>
+                    <td>{{item.games.AwayTeamRuns}}</td>       
+                    <td>{{item.total_lose }}</td>
+                    <td>{{item.total_win }}</td>
+                    <td>{{item.created_at | date:"mediumDate"}}</td>
+                    <td>{{item.games.Status}}</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+
+<app-users-view-game-played-bets *ngIf="selectedGameTable" (closed)="onBack()" [data]="user" [gameTable]="selectedGameTable"></app-users-view-game-played-bets>

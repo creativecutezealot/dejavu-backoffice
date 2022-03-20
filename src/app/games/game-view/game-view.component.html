@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 *ngIf="games">{{games.HomeTeam.Name}} vs {{games.AwayTeam.Name}} 
+            <a (click)="onReload()" class="btn btn-warning header-reload"><i class="fas fa-sync-alt"></i> Reload</a>
+            <a (click)="onBack()" class="btn btn-primary header-back"><i class="fas fa-chevron-left"></i> Back</a>
+         
+        </h1>
+        
+        <hr/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav sub-nav">
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='overview')}" (click)="selectNav('overview')">
+                <a class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='plays')}" (click)="selectNav('plays')">
+                <a class="nav-link">Plays</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='users')}" (click)="selectNav('users')">
+                <a class="nav-link">Users</a>
+            </li>
+        </ul>
+    </div>
+</div><!--end-->
+
+<div class="row sub-con">
+    <div class="col-md-12" *ngIf="games">
+        <app-game-overview *ngIf="selectedNav=='overview'" [data]="games"></app-game-overview>
+        <app-games-plays *ngIf="selectedNav=='plays'" [data]="games"></app-games-plays>
+        <app-game-users *ngIf="selectedNav=='users'" [data]="games"></app-game-users>
+    </div>
+</div>

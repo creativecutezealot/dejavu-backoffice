@@ -1,0 +1,76 @@
+<div class="row" style="margin-bottom:15px;">
+    <div class="col-md-12">
+        <a (click)="onBack()" class="btn btn-primary"><i class="fas fa-chevron-left"></i> Back</a>
+        <a (click)="loadData()" class="btn btn-warning btn-reload"><i class="fas fa-sync-alt"></i> Reload</a>
+    </div>
+</div>
+<div class="row">
+    <div [ngClass]="win.value=='false'?'col-md-12':'col-md-6'" *ngIf="win.value=='false' || win.value==''">
+        <div class="box-o">
+            <h3>{{total_lose | number}}</h3>
+            <span>Total Lose</span>
+        </div>
+    </div>
+    <div [ngClass]="win.value=='true'?'col-md-12':'col-md-6'" class="col-md-6" *ngIf="win.value=='true' || win.value==''">
+        <div class="box-o">
+            <h3>{{total_win | number}}</h3>
+            <span>Total Win</span>
+        </div>
+    </div>
+</div>
+<!--end-->
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" width="10%">Place</th>
+                    <th scope="col" width="10%">Passline</th>
+                    <th scope="col" width="10%">Win</th>
+                    <th scope="col" width="10%">Amount</th>
+
+                </tr>
+                <tr [formGroup]="filter_form">
+                    <td>
+                        <select (change)="onSearch($event,'place')" formControlName="place" class="form-control">
+                            <option value="">--Any--</option>
+                            <option value="infield_fly">Infield Fly</option>
+                            <option value="bb">Walk</option>
+                            <option value="k">Strikeout</option>
+                            <option value="ground_out">Ground Out</option>
+                            <option value="fly_out">Fly Out</option>
+                            <option value="hit">Hit</option>
+                            <option value="come">Come</option>
+                            <option value="passline">Passline</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select (change)="onSearch($event,'passline')" formControlName="passline" class="form-control" #passline>
+                            <option value="">--Any--</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select (change)="onSearch($event,'win')" formControlName="win" class="form-control" #win>
+                            <option value="">--Any--</option>
+                            <option value="true">Win</option>
+                            <option value="false">Lose</option>
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let item of data">
+                    <td>{{item.place | placeType}}</td>
+                    <td>{{item.isPassLine?"Yes":"No"}}</td>
+                    <td>{{item.win?"Win":"Lose"}}</td>
+                    <td>{{item.win?item.win_amount:item.amount}}</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>

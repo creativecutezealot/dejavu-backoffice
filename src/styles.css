@@ -1,0 +1,133 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@ng-select/ng-select/themes/default.theme.css";
+*{
+    outline:none!important;
+}
+.help-block.error{color:#dc3545;font-size:14px;margin-top:10px;}
+.req{color:#f00}
+.b-loader{margin-left:20px}
+body{font-family:"Roboto";background:#f1f4f5}
+body.signin{background:#fff;}
+.navbar-custom{padding:8px 15px;background:#f8f8f8;position: relative;z-index:99;box-shadow: 0px 1px 5px rgba(0,0,0,0.1)}
+.navbar-brand{border-radius:8px;color:#444;text-align:center;font-size:16px}
+.navbar-brand span{font-weight:bold;border-radius:5px;background:none;color:#1167bf;padding:8px 0px;letter-spacing:2px}
+.navbar-custom .nav {margin-top:5px;}
+.navbar-custom .nav .name{margin-right:15px;color:#697683}
+.navbar-custom .nav .dropdown-menu a{font-size:14px;color:#697683}
+.navbar-custom .nav .dropdown-menu a:visited{color:#697683}
+.navbar-custom .nav .dropdown-menu a:active{color:#fff}
+.navbar-custom .nav .dropdown-menu a:focus{color:#fff}
+.navbar-custom .nav .account-menu{font-size:14px}
+.navbar-custom .nav .account-menu i{font-size:14px;color:#697683}
+.navbar-custom .nav .dropdown-item{padding:0 15px;}
+.navbar-custom .nav .dropdown-item i{margin-right:5px}
+.sidebar{position: absolute;left:0px;top:0px;background:#f1f4f5;min-height:100vh;width:180px;padding-top:80px;height:100%}
+.sidebar .nav{margin-bottom:20px}
+.sidebar ul li a{color:#26323d;font-size:13px;letter-spacing:1px}
+.sidebar ul li a i{color:#8593a0;min-width:25px}
+.sidebar ul li a:hover{color:#1167bf}
+.sidebar ul li a:hover i{color:#1167bf}
+.sidebar ul li.active a{color:#fff;background:#1167bf}
+.sidebar ul li.active i{color:#fff!important}
+.sub-nav{margin-bottom:-7px}
+.sub-nav li.dropdown ul.dropdown-menu{top:75%}
+.sub-nav li.dropdown .dropdown-item{padding:0px}
+.sub-nav li.dropdown .dropdown-item a{font-size:14px;}
+.sub-nav li.dropdown .dropdown-item.active a{color:#fff!important}
+.sub-nav li a{color:#8593a0!important;cursor: pointer;}
+.sub-nav li a:hover{color:#1167bf!important}
+.sub-nav li.active{border-bottom:3px solid #1167bf!important;font-weight:500;}
+.sub-nav li.active a{color:#26323d!important}
+.sub-nav li.dropdown:hover ul.dropdown-menu{display: block}
+.sub-nav li.dropdown .dropdown-item.active{border:none!important;background-color:#1167bf}
+.sub-nav li.dropdown .dropdown-toggle:after{vertical-align:top;margin-left:10px;margin-top:10px}
+.custom-content{position:relative;background:#fff;;width:calc(100% - 180px);min-height:100vh;border-left:1px solid #eee;float: right;padding:30px}
+.custom-content .heading{padding-bottom:5px;border-bottom:1px solid #d4d8d9}
+.custom-content .heading .sub{text-transform:uppercase;font-weight:700;color:#3b3c41;font-size:14px}
+.custom-content .inner-container{padding:20px 0}
+.table thead th{border-bottom:2px solid #1167bf;border-top:none;font-size:14px;color:#1167bf}
+.table .edit-link{cursor: pointer;margin:0 5px!important}
+.table tbody tr td{font-size:14px}
+.pager{display:block;padding:20px 0;font-size:14px;}
+.pager .data-loader{display:block;text-align: center;}
+.sub-con{margin-top:30px}
+h1{font-size:24px;color:#495057;}
+h2{font-size:18px;color:#495057;}
+h4.sub-title{font-size:14px;font-weight:700;text-transform:uppercase;color:#1167bf;padding:8px 0;border-bottom:1px solid #eee;}
+.sub-con h2{margin-top:10px}
+.filter-heading{float:right;max-width:300px;margin-top:-10px}
+.has-search h1{display: inline-block}
+.game-overview{margin-bottom:20px;}
+.game-overview .lbl{font-size:14px;text-transform:uppercase;color:#868E96;display:block;}
+.game-overview .val{font-size:14px;display: block;}
+.pl_loader{
+    position: relative;
+}
+.hide{display:none;}
+h1.pl_loader{min-height:30px;}
+.pl_loader:after{
+    animation-duration: 1.7s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-name: placeholderAnimate;
+    background: #f6f7f8; 
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background-size: 1300px; 
+    content:" ";
+    position: absolute;
+    z-index:99;
+    height:100%;
+    width:100%;
+    top:0px;left:0px;
+}
+.top-buttons{float:right;margin-bottom:15px}
+.btn{cursor: pointer!important;}
+.btn.btn-secondary,
+.btn.btn-primary{color:#fff!important;}
+.btn i{margin-right:5px}
+.form_data label{color:#343A40;font-size:14px}
+.modal-title{font-size:18px}
+.table tbody tr{cursor: pointer;}
+.box .label{font-size:14px;text-transform: uppercase;color:#495057;font-weight:bold;display:block;}
+.box .val{font-size:14px;color:#868E96;display:block;margin-bottom:10px;}
+.box-o{border:1px solid #697683;padding:15px;text-align:center;border-radius:5px;margin-bottom:5px;}
+.box-o h3{color:#697683}
+.box-o span{color:#697683;display:block;font-size:12px;text-transform:uppercase;font-weight:700;}
+.top-buttons{margin-bottom:20px}
+.btn-reload{float:right}
+.pull-right{float:right}
+.header-back{float: right;margin-top:-5px}
+.header-reload{float: right;margin-top:-5px;margin-left:5px}
+.header-button{float: right;margin-top:-5px}
+
+.box-dash{display:block;border-radius:5px;border:1px solid#ADB5BD;padding:15px 10px;margin-bottom:20px}
+.box-dash .val{display:block;font-size:24px;color:#1167bf;text-align:center;}
+.box-dash .lbl{display:block;font-size:12px;font-weight:700;text-transform:uppercase;color:#495057;text-align:center}
+.dash-row{margin-bottom:0px;}
+ul.tp{display:block;list-style:none;margin:0px;padding:0px;}
+ul.tp li{padding:5px;font-size:14px}
+ul.tp li:nth-child(2n+1){background:#F1F3F5;}
+.top-players .lbl{margin-bottom:15px;}
+@keyframes placeholderAnimate {
+    0%{ background-position: -650px 0; }
+    100%{ background-position: 650px 0; }
+}
+
+@media (min-width: 576px) { 
+    .box-dash{margin-bottom:10px} 
+    .dash-row{margin-bottom:10px;}
+}
+
+
+@media (min-width: 768px) { 
+    .box-dash{margin-bottom: 15px;}
+}
+
+
+@media (min-width: 992px) {  }
+
+
+@media (min-width: 1200px) { 
+
+ }

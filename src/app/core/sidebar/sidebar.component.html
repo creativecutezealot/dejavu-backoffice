@@ -1,0 +1,44 @@
+<div class="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        </li>
+    </ul>
+
+    <ul class="nav flex-column">
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/play/game-schedules"><i class="fas fa-baseball-ball"></i> Schedules</a>
+         </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active" *ngIf="role == 1">
+            <a class="nav-link" routerLink="/admin/seasons"><i class="fas fa-rainbow"></i> Seasons</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active" *ngIf="role == 1">
+            <a class="nav-link" routerLink="/admin/games"><i class="fas fa-baseball-ball"></i> Games</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/teams"><i class="fas fa-users"></i> Teams</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/players"><i class="fas fa-users"></i> Players</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active" *ngIf="role == 1">
+                <a class="nav-link" routerLink="/admin/play/operators"><i class="fas fa-user"></i> Operators</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active" *ngIf="role == 1">
+                <a class="nav-link" routerLink="/admin/users"><i class="fas fa-user"></i> Users</a>
+        </li>
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active" *ngIf="role == 1">
+            <a class="nav-link" routerLink="/admin/simulators"><i class="fas fa-plane"></i> Simulator</a>
+         </li>
+         <!--<li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/simulatorsv2"><i class="fas fa-plane"></i> Simulator V2</a>
+         </li>-->
+    </ul>
+
+
+    <ul class="nav flex-column"  *ngIf="role == 1">
+        <li class="nav-item" [ngClass]="isLoading?'pl_loader':''" routerLinkActive="active">
+            <a class="nav-link" routerLink="/admin/settings"><i class="fas fa-cog"></i> Settings</a>
+        </li>
+    </ul>
+</div>

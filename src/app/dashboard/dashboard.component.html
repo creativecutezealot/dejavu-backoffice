@@ -1,0 +1,75 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="box-dash">
+          <span class="val">{{total_win | number}}</span>
+          <span class="lbl">Total Win</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="box-dash">
+          <span class="val">{{total_lose | number}}</span>
+          <span class="lbl">Total Lose</span>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <canvas id="betsWinloseChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+  <!--end---->
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="box-dash">
+          <span class="val" *ngIf="total_users">{{total_users}}</span>
+          <span class="lbl">Number of Players</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="box-dash">
+          <span class="val">0</span>
+          <span class="lbl">Online Players</span>
+        </div>
+      </div>
+      <div class="col-md-12" *ngIf="top_players">
+        <div class="box-dash top-players">
+          <span class="lbl">Top Players</span>
+          <ul class="tp">
+            <li *ngFor="let u of top_players"><span class="name">{{u.user.display_name}}</span> <span
+                class="badge badge-success pull-right">{{u.total | number}}</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end-->
+</div>
+<!--end-->
+<hr />
+<div class="row">
+  <div class="col-md-6">
+    <div class="box-dash top-players">
+      <span class="lbl">Top Bets By Amount</span>
+      <ul class="tp" *ngIf="game_bets">
+        <li *ngFor="let u of game_bets"><span class="name">{{u.label}}</span> <span
+            class="badge badge-success pull-right">{{u.total | number}}</span></li>
+      </ul>
+      <canvas id="betsOverviewChart" height="250"></canvas>
+    </div>
+    
+  </div>
+  <div class="col-md-6">
+        <div class="box-dash top-players">
+          <span class="lbl">Top Bets By Count</span>
+          <ul class="tp" *ngIf="game_bets">
+            <li *ngFor="let u of game_bets_count"><span class="name">{{u.label}}</span> <span
+                class="badge badge-success pull-right">{{u.total | number}}</span></li>
+          </ul>
+          <canvas id="betsOverviewCountChart" height="250"></canvas>
+        </div>
+       
+    </div>
+  
+</div>

@@ -1,0 +1,21 @@
+.text-muted{color:#95aac9!important}
+body{font-family:"Roboto";font-size:16px;color:#12263f}
+.text-muted{font-size:14px}
+.ic_s{width:100%;display:block;padding:0 40px;max-width:400px;margin:0 auto;}
+label{font-size:15px}
+p.forgot{text-align:center;font-size:14px;margin:40px auto;color:#95aac9}
+p.forgot a{color:#007bff;text-decoration:underline}
+.b_sigin_c{margin-top:40px}
+.logo{margin:0 auto 15px;max-width:160px;display:block;}
+@media (min-width: 576px) { 
+    .app-signin-bg{display:none} 
+    .signin_row{height:100vh}
+}
+
+
+@media (min-width: 768px) { .app-signin-bg{display:block} }
+
+
+@media (min-width: 992px) {  }
+
+@media (min-width: 1200px) {  }

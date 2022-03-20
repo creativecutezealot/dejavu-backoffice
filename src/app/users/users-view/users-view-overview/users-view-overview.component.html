@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="box" *ngIf="user">
+                <span class="label">Account Status</span>
+                <span class="val"><span class="badge" [ngClass]="user.status==1?'badge-success':'badge-secondary'">{{user.status==1?"Active":"Inactive"}}</span></span>
+                <span class="label">Name</span>
+                <span class="val">{{user.first_name}} {{user.last_name}}</span>
+                <span class="label">Display Name</span>
+            <span class="val">{{user.display_name}}</span>
+            <span class="label">Email</span>
+            <span class="val">{{user.email}}</span>
+            <span class="label">Points Balance</span>
+            <span class="val">{{points_remaining | number}}</span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <canvas id="WinLoseChart" height="250"></canvas>
+    </div>
+</div>

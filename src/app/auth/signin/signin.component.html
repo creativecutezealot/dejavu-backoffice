@@ -1,0 +1,42 @@
+<div class="container-fluid">
+    <div class="row align-items-center justify-content-center signin_row">
+        <div class="col-lg-12">
+
+            <form [formGroup]="signInForm" (ngSubmit)="onSignIn()">
+                <div class="ic_s">
+
+                    <img src="../../../assets/images/logo.png" class="logo" alt="Logo"/>
+           
+                    <p class="text-center text-muted">Sign in to get started.</p>
+                    <div *ngIf="IsShowAlert" class="alert alert-danger" role="alert">
+                        {{alertMessage}}
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" id="email" formControlName="email" placeholder="">
+                        <p *ngIf="!signInForm.get('email').valid && signInForm.get('email').touched"
+                            class="help-block error">Email is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Password</label>
+                        <input type="password" class="form-control" id="password" formControlName="password"
+                            placeholder="">
+                        <p *ngIf="!signInForm.get('password').valid && signInForm.get('password').touched"
+                            class="help-block error">Password is required</p>
+                    </div>
+                    <div class="form-group b_sigin_c fa-3x">
+                        <button [disabled]="!signInForm.valid || onProgress" type="submit"
+                            class="btn btn-lg btn-block btn-primary">Sign In <i *ngIf="onProgress"
+                                class="fas fa-spinner fa-spin b-loader"></i></button>
+                        <p class="forgot">Did you forgot your password? Click <a style="cursor:pointer">Here</a></p>
+                    </div>
+                </div>
+                <!--end of ic_s-->
+            </form>
+
+        </div>
+        <!--end of -->
+
+    </div>
+    <!--end--->
+</div>

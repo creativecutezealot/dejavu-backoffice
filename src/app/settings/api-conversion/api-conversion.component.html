@@ -1,0 +1,167 @@
+<div class="row">
+    <div class="col-md-12">
+      <h1>API Conversion
+        <div class="filter-heading">
+          <form [formGroup]="filter_form">
+            <input type="text" (keyup)="onSearch($event)" class="form-control" placeholder="search..."
+              formControlName="q">
+          </form>
+        </div>
+      </h1>
+      <hr />
+    </div>
+  </div>
+  <!--end-->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="top-buttons">
+        <a (click)="onAdd(data_popup)" class="btn btn-primary"><i class="fas fa-plus"></i> Add</a>
+      </div>
+    </div>
+  </div>
+  <!--end-->
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+            <th scope="col">Check Comments</th>
+            <th scope="col">Comments</th>     
+            <th scope="col" width="1%">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of data">
+            <td>{{item.from}}</td>
+            <td>{{item.to}}</td>
+            <td>{{item.check_desc}}</td>
+            <td>{{item.comments}}</td>
+          
+            <td><a placement="top" ngbTooltip="Edit" class="edit-link text-primary" (click)="onSelect(item,data_popup)"><i
+                  class="fas fa-pencil-alt"></i></a>
+                  <a placement="top" ngbTooltip="Delete" class="text-danger btn_delete"
+                  (click)="deleteItem(item,delete_popup)"><i class="fas fa-trash-alt"></i> </a>
+                </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pager" *ngIf="data">
+          <div *ngIf="onProgress" class="data-loader">
+            <div class="spinner-grow text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <span class="lbl">Loading...</span>
+          </div>
+          <a class="btn btn-light more" *ngIf="!onProgress && !isMaxLoad" (click)="onLoadMore()">Load More</a>
+      </div><!--end of pager-->
+    </div><!--end-->
+  </div><!--end-->
+  <ng-template #data_popup let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">{{method=="add"?"Add":"Edit"}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="data_form" class="form_data">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="from">From <span class="req">*</span>
+              </label>
+              <input type="text" formControlName="from" class="form-control" />
+              <p *ngIf="!data_form.get('from').valid && data_form.get('from').touched"
+                class="help-block error">From
+                is required</p>
+            </div>
+            <!--end-->
+          </div>
+          <!---end-->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="to">To <span class="req">*</span>
+              </label>
+              <select formControlName="to" class="form-control">
+                  
+                  <option value="Walk">Walk</option>
+                  <option value="Ground Out">Ground Out</option>
+                  <option value="Hit">Hit</option>
+                  <option value="Fly Out">Fly Out</option>
+                  <option value="Infield Fly">Infield Fly</option>
+                  <option value="Strikeout">Strikeout</option>
+                  <option value="">Blank</option>
+              </select> 
+              <p *ngIf="!data_form.get('to').valid && data_form.get('to').touched" class="help-block error">
+                To is required</p>
+            </div>
+            <!--end-->
+          </div>
+          <!---end-->
+  
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="comments">Comments
+              </label>
+              <input type="text" formControlName="comments" class="form-control" />
+              <p *ngIf="!data_form.get('comments').valid && data_form.get('comments').touched"
+                class="help-block error">Comments
+                is required</p>
+            </div>
+            <!--end-->
+          </div>
+          <!--end-->
+       
+  
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="check_desc">Check Comments <span class="req">*</span>
+              </label>
+              <select formControlName="check_desc" class="form-control">
+                  <option value="">--Select--</option>           
+                  <option value="true">True</option>
+                  <option value="false">False</option>
+              </select>
+              <p *ngIf="!data_form.get('check_desc').valid && data_form.get('check_desc').touched" class="help-block error">Check Comments
+                is required</p>
+            </div>
+            <!--end-->
+          </div>
+          
+   
+        </div>
+        <!--end-->
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button [disabled]="onProgress || !data_form.valid" type="button" class="btn btn-primary" (click)="onSave()">
+        <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+        {{onProgress?"Saving...":"Save"}}
+      </button>
+    </div>
+  </ng-template>
+  
+  
+  
+  <ng-template #delete_popup let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Delete Confirmation</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Do you really want to remove?
+    </div>
+    <div class="modal-footer">
+      <button [disabled]="onProgress" type="button" class="btn btn-secondary" (click)="onCancel()">
+        No
+      </button>
+      <button [disabled]="onProgress" type="button" class="btn btn-primary" (click)="onDelete()">
+        <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+        {{onProgress?"Removing...":"Yes"}}
+      </button>
+    </div>
+  </ng-template>

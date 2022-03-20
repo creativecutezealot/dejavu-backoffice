@@ -1,0 +1,385 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>
+      Teams
+      <div class="filter-heading">
+        <form [formGroup]="filter_form">
+          <input
+            type="text"
+            (keyup)="onSearch($event)"
+            class="form-control"
+            placeholder="search..."
+            formControlName="q"
+          />
+        </form>
+      </div>
+    </h1>
+    <hr />
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <!-- <div class="top-buttons">
+                  <a (click)="onResync()" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Re-Sync</a>
+              </div> -->
+    <div class="top-buttons">
+      <a (click)="addTeam(data_popup)" class="btn btn-primary"
+        ><i class="fas fa-plus"></i> Add</a
+      >
+    </div>
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col" width="1%">Logo</th>
+          <th scope="col" width="20%">Short Name</th>
+          <th scope="col" width="20%">Name</th>
+          <th scope="col" width="20%">City</th>
+          <th scope="col" width="20%">League</th>
+          <th scope="col" width="20%">Division</th>
+          <th scope="col" width="1%">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data">
+          <td style="text-align: center">
+            <img height="45" [src]="item.WikipediaLogoUrl" />
+          </td>
+          <td>{{ item.Key }}</td>
+          <td>{{ item.Name }}</td>
+          <td>{{ item.City }}</td>
+          <td>{{ item.League }}</td>
+          <td>{{ item.Division }}</td>
+          <td>
+            <a placement="top" ngbTooltip="Edit" class="edit-link text-primary" (click)="editTeam(item, data_popup)"
+              ><i class="fas fa-pencil-alt"></i
+            ></a>
+            <a
+              placement="top"
+              ngbTooltip="Delete"
+              class="text-danger btn_delete"
+              (click)="deleteItem(item, delete_popup)"
+              ><i class="fas fa-trash-alt"></i
+            ></a>
+            <a placement="top" ngbTooltip="Lineup" class="edit-link text-primary" (click)="openLineup(item, lineup_popup)"
+              ><i class="fas fa-list-alt"></i
+            ></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pager" *ngIf="data">
+      <div *ngIf="onProgress" class="data-loader">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span class="lbl">Loading...</span>
+      </div>
+      <a
+        class="btn btn-light more"
+        *ngIf="!onProgress && !isMaxLoad"
+        (click)="onLoadMore()"
+        >Load More</a
+      >
+    </div>
+    <!--end of pager-->
+  </div>
+  <!--end-->
+</div>
+<!--end-->
+
+<ng-template #data_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ method == "add" ? "Add" : "Edit" }}
+    </h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert
+      *ngIf="coreService.showAlert"
+      [type]="coreService.alert.type"
+      (close)="coreService.closeAlert()"
+    >
+      {{ coreService.alert.message }}</ngb-alert
+    >
+
+    <form [formGroup]="teamForm" class="form_data">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="first_name">Name <span class="req">*</span> </label>
+            <input type="text" formControlName="name" class="form-control" />
+            <p
+              *ngIf="!teamForm.get('name').valid && teamForm.get('name').touched"
+              class="help-block error"
+            >
+              Name is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name"
+              >Short Name <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="key" class="form-control" />
+            <p
+              *ngIf="!teamForm.get('key').valid && teamForm.get('key').touched"
+              class="help-block error"
+            >
+              Short Name is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" formControlName="image" class="form-control" />
+          </div>
+          <!--end-->
+        </div>
+      </div>
+     
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress || !teamForm.valid"
+      type="button"
+      class="btn btn-primary"
+      (click)="onSave()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Saving..." : "Save" }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Delete Confirmation</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Do you really want to remove?
+  </div>
+  <div class="modal-footer">
+    <button [disabled]="onProgress" type="button" class="btn btn-secondary" (click)="onCancel()">
+
+      No
+    </button>
+    <button [disabled]="onProgress" type="button" class="btn btn-primary" (click)="onDelete()">
+      <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+      {{onProgress?"Removing...":"Yes"}}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #lineup_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      Lineups
+    </h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert
+      *ngIf="coreService.showAlert"
+      [type]="coreService.alert.type"
+      (close)="coreService.closeAlert()"
+    >
+      {{ coreService.alert.message }}</ngb-alert
+    >
+    <form [formGroup]="lineupForm" class="form_data">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input type="text" formControlName="lineup_name" class="form-control" placeholder="New Lineup"/>
+            <p
+            *ngIf="lineupErr"
+            class="help-block error"
+          >
+            Input a lineup name
+          </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <button
+          class="btn btn-primary"
+          (click)="onSaveLineup()"
+        >
+          <span
+            *ngIf="onProgress"
+            class="spinner-grow spinner-grow-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          {{ onProgress ? "Saving..." : "Save" }}
+        </button>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <div id="accordion">
+          <div class="card" *ngFor="let item of selectedItem.lineups">
+            <div class="card-header" id="headingOne">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  {{ item.Name }}
+                </button>
+              </h5>
+            </div>
+        
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+              <div class="card-body">
+                {{ item.Name }}
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col" width="20%">Lineup Name</th>
+              <th scope="col" width="1%">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of selectedItem.lineups">
+              <td>
+                
+                {{ item.Name }}
+                
+                <div *ngIf="item._id == selectedLineup">
+
+                  <div class="row mb-1" *ngIf="showDeleteLineupConfirm">
+                      <div class="col-md-12">
+                      Do you really want to remove?
+                      <button [disabled]="onProgress" type="button" class="btn btn-secondary mr-1" (click)="onCancelDeleteLineup()">
+                  
+                        No
+                      </button>
+                      <button [disabled]="onProgress" type="button" class="btn btn-primary" (click)="onDeleteLineup()">
+                        <span *ngIf="onProgress" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        {{onProgress?"Removing...":"Yes"}}
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-8">
+                    <ng-select [searchable]="true" (change)="selectPlayer($event)">
+                      <ng-option *ngFor="let a of selectedItem.players" [value]="a._id">
+                        <span>{{ a.FirstName }} {{ a.LastName }}</span></ng-option
+                      >
+                    </ng-select>
+                    <p
+                      *ngIf="addToLineUpErr && addToLineUpErr != ''"
+                      class="help-block error"
+                    >
+                      {{ addToLineUpErr }}
+                    </p>
+                    </div>
+                  <div class="col-4 pl-1 pr-1">
+                    <button
+                      type="button"
+                      class="btn btn-info btn-block"
+                      (click)="addToLineUp(item._id)"
+                    >
+
+                    Add to Lineup
+                      <!-- <span
+                        *ngIf="onProgressAddBatter"
+                        class="spinner-grow spinner-grow-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      {{ onProgressAddBatter ? "" : "Add" }} -->
+                    </button>
+                  </div>
+                </div>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col" width="20%">Players</th>
+                      <th scope="col" width="1%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let p of lineupPlayers">
+                      <td>
+                        <span>{{ p.PlayerInfo[0].FirstName }} {{ p.PlayerInfo[0].LastName }}</span>
+                      </td>
+                      <td>
+                        <a
+                          placement="top"
+                          ngbTooltip="Delete"
+                          class="text-danger btn_delete"
+                          (click)="deleteLineupPlayer(p._id)"
+                          ><i class="fas fa-trash-alt"></i
+                        ></a>
+                      </td>
+                      </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              
+              </td>
+              <td>
+                <a placement="top" ngbTooltip="Edit" class="edit-link text-primary" (click)="editTeamLineup(item._id)"
+                  ><i class="fas fa-pencil-alt"></i
+                ></a>
+                <a
+                  placement="top"
+                  ngbTooltip="Delete"
+                  class="text-danger btn_delete"
+                  (click)="deleteTeamLineup(item._id)"
+                  ><i class="fas fa-trash-alt"></i
+                ></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!--end-->
+    </div>
+  </div>
+</ng-template>
+

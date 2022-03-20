@@ -1,0 +1,118 @@
+<div *ngIf="!selectedGames" class="row">
+    <div class="col-md-12">
+        <h1>Games</h1>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-buttons">
+            <a (click)="onReload()" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Reload</a>
+        </div>
+    </div>
+</div>
+<!--end-->
+<div *ngIf="!selectedGames" class="row">
+    <div class="col-md-12">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" width="10%">GameID</th>
+                    <th scope="col" width="10%">Season</th>
+                    <th scope="col" width="20%">Schedule</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Inning Half</th>
+                    <th scope="col" width="10%">Inning</th>
+                    <th scope="col">Home Team</th>
+                    <th scope="col">Away Team</th>
+                    <th scope="col">Home Score</th>
+                    <th scope="col">Away Score</th>
+            
+
+                </tr>
+                <tr [formGroup]="filter_form">
+                    <td></td>
+                    <td><input type="text" (keyup)="onSearch($event,'season')" formControlName="Season"
+                            class="form-control" value="" placeholder="Season" /></td>
+                    <td>
+                        <div class="input-group">
+                            <input (click)="onSearch($event,'filter_date_reset')"
+                                (blur)="onSearch($event,'filter_date')" (dateSelect)="onSearch($event,'filter_date')"
+                                formControlName="filter_date" class="form-control" placeholder="yyyy-mm-dd"
+                                name="filter_date" [(ngModel)]="filter_date_m" ngbDatepicker
+                                #filter_date="ngbDatepicker">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" (click)="filter_date.toggle()"
+                                    type="button"><i class="fas fa-calendar-alt"></i></button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="form-control" (change)="onSearch($event,'status')" formControlName="Status">
+                            <option value="">--Any--</option>
+                            <option value="InProgress">In Progress</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Final">Final</option>
+                            <option value="Canceled">Canceled</option>
+                            <option value="Suspended">Suspended</option>
+                            <option value="Postponed">Postponed</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" (change)="onSearch($event,'inning_half')"
+                            formControlName="InningHalf">
+                            <option value="">--Any--</option>
+                            <option value="T">T</option>
+                            <option value="B">B</option>
+                        </select>
+                    </td>
+                    <td><input type="text" (keyup)="onSearch($event,'inning')" formControlName="Inning"
+                            class="form-control" value="" placeholder="Inning" /></td>
+                    <td> <select class="form-control" (change)="onSearch($event,'away_team')"
+                            formControlName="AwayTeam">
+                            <option value="">--Any--</option>
+                            <option [value]="t.Key" *ngFor="let t of teams">{{t.Name}}</option>
+                        </select></td>
+                    <td>
+                        <select class="form-control" (change)="onSearch($event,'home_team')" formControlName="HomeTeam">
+                            <option value="">--Any--</option>
+                            <option [value]="t.Key" *ngFor="let t of teams">{{t.Name}}</option>
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of data">
+                    
+                    <td (click)="onSelectGame(item)">{{item.GameID}}</td>
+                    <td (click)="onSelectGame(item)">{{item.Season}}</td>
+                    <td (click)="onSelectGame(item)">{{item.DateTime | date:"mediumDate"}}</td>
+                    <td (click)="onSelectGame(item)"><span class="badge"
+                            [ngClass]="item.Status | gamesStatusClass">{{item.Status}}</span></td>
+                    <td (click)="onSelectGame(item)">{{item.InningHalf}}</td>
+                    <td (click)="onSelectGame(item)">{{item.Inning}}</td>
+                    <td (click)="onSelectGame(item)">{{item.HomeTeam.Name}}</td>
+                    <td (click)="onSelectGame(item)">{{item.AwayTeam.Name}}</td>
+                    <td (click)="onSelectGame(item)">{{item.HomeTeamRuns}}</td>
+                    <td (click)="onSelectGame(item)">{{item.AwayTeamRuns}}</td>
+                   
+
+                </tr>
+            </tbody>
+        </table>
+        <div class="pager" *ngIf="data">
+            <div *ngIf="onProgress" class="data-loader">
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <span class="lbl">Loading...</span>
+            </div>
+            <a class="btn btn-light more" *ngIf="!onProgress && !isMaxLoad" (click)="onLoadMore()">Load More</a>
+        </div>
+        <!--end of pager-->
+    </div>
+    <!--end-->
+</div>
+<!--end-->

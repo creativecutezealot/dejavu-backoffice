@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 [ngClass]="!user?'pl_loader':''"><span *ngIf="user">{{user.first_name}} {{user.last_name}}</span>
+            <a (click)="onBack()" class="btn btn-primary header-back"><i class="fas fa-chevron-left"></i> Back</a>
+        </h1>
+        <hr/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav sub-nav">
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='overview')}" (click)="selectNav('overview')">
+                <a class="nav-link">Overview</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='points')}" (click)="selectNav('points')">
+                <a class="nav-link">Points</a>
+            </li>
+
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='user-currency')}" (click)="selectNav('user-currency')">
+                <a class="nav-link">In-Game Currency</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'active':(selectedNav=='games')}" (click)="selectNav('games')">
+                <a class="nav-link">Games Played</a>
+            </li>
+        </ul>
+    </div>
+</div><!--end-->
+<div class="row sub-con">
+    <div class="col-md-12" *ngIf="user">
+        <app-users-view-overview [data]="user" *ngIf="selectedNav=='overview'"></app-users-view-overview>
+        <app-users-view-currency [data]="user" *ngIf="selectedNav=='user-currency'"></app-users-view-currency>
+        <app-users-view-points [data]="user" *ngIf="selectedNav=='points'"></app-users-view-points>
+        <app-users-view-game-played [data]="user" *ngIf="selectedNav=='games'"></app-users-view-game-played>
+      
+    </div><!--end-->
+</div><!--end-->

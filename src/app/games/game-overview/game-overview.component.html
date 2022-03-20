@@ -1,0 +1,118 @@
+<div class="row">
+  <div class="col-md-12">
+    <h4 class='sub-title'>Game Info</h4>
+  </div>
+</div>
+<div class="row game-overview">
+  <div class="col-md-3">
+    <strong class="lbl">Date Time</strong><br />
+    <span class="val">{{games.DateTime | date:"medium"}}</span>
+  </div>
+  <div class="col-md-3">
+    <strong class="lbl">Season</strong><br />
+    <span class="val">{{games.Season}}</span>
+  </div>
+
+  <div class="col-md-3">
+    <strong class="lbl">Channel</strong><br />
+    <span class="val">{{games.Channel}}</span>
+  </div>
+  <div class="col-md-3">
+    <strong class="lbl">Status</strong><br />
+    <span class="badge" [ngClass]="games.Status | gamesStatusClass">{{games.Status}}</span>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+    <h4 class='sub-title'>Game Scores</h4>
+  </div>
+</div>
+<div class="row game-overview">
+  <div class="col-md-3">
+    <strong class="lbl">Inning</strong><br />
+    <span class="val">{{games.Inning}}</span>
+  </div>
+  <div class="col-md-3">
+    <strong class="lbl">Inning Half</strong><br />
+    <span class="val">{{games.InningHalf}}</span>
+  </div>
+
+  <div class="col-md-3">
+    <strong class="lbl">Home Team Score</strong><br />
+    <span class="val">{{games.HomeTeamRuns}}</span>
+  </div>
+  <div class="col-md-3">
+    <strong class="lbl">Away Team Score</strong><br />
+    <span class="val">{{games.AwayTeamRuns}}</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h4 class='sub-title'>Pitchers</h4>
+  </div>
+</div>
+<div class="row game-overview">
+  <div class="col-md-3">
+    <strong class="lbl">Winning Pitcher</strong><br />
+    <span class="val">{{games.WinningPitcher}}</span>
+  </div>
+  <div class="col-md-3">
+    <strong class="lbl">Losing Pitcher</strong><br />
+    <span class="val">{{games.LosingPitcher}}</span>
+  </div>
+
+  <div class="col-md-3">
+    <strong class="lbl">Saving Pitcher</strong><br />
+    <span class="val">{{games.SavingPitcher}}</span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h4 class='sub-title'>Last Play</h4>
+  </div>
+</div>
+<div class="row game-overview" *ngIf="lastPlay">
+  <div class="col-md-3">
+    <strong class="lbl">Result</strong><br />
+    <span class="val">{{lastPlay.Result}}</span>
+  </div>
+  <div class="col-md-9">
+    <strong class="lbl">Description</strong><br />
+    <span class="val">{{lastPlay.Description}}</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h4 class='sub-title'>Bets</h4>
+  </div>
+</div>
+<div class="row game-overview">
+  <div class="col-md-6">
+    <strong class="lbl text-center">Bets by Place</strong>
+    <canvas id="betsOverviewChart" height="250"></canvas>
+  
+  </div>
+  <div class="col-md-6">
+    <strong class="lbl text-center">Win/Lose</strong>
+    <canvas id="betsWinloseChart" height="220"></canvas>
+   
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+      <h4 class='sub-title'>Bets Place Win/Lose</h4>
+  </div>
+</div>
+<div class="row game-overview" *ngIf="loadBetsPerPlaceWinLoseData">
+    <div class="col-md-3" *ngFor="let item of loadBetsPerPlaceWinLoseData">
+        <strong class="lbl text-center">{{item.label}}</strong>
+        <canvas id="{{item.key}}WinLoseChart" height="220"></canvas>
+    </div>
+
+</div>

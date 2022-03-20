@@ -1,0 +1,351 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>Game Schedules</h1>
+    <hr />
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <div class="top-buttons">
+      <a (click)="addGame(data_popup)" class="btn btn-primary"
+        ><i class="fas fa-plus"></i> Add</a
+      >
+    </div>
+
+    <div *ngIf="onProgress" class="data-loader">
+      <div class="spinner-grow text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span class="lbl">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col" width="20%">Schedule</th>
+          <th scope="col" width="20%">Away Team</th>
+          <th scope="col" width="20%">Home Team</th>
+          <th scope="col" width="20%">Status</th>
+          <th scope="col" width="20%">Assigned To</th>
+          <th scope="col" width="20%">Betting Line</th>
+          <th scope="col" width="1%" *ngIf="role == 1">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr [formGroup]="searchForm">
+          <th scope="col" width="20%">
+            <div class="input-group">
+              <input
+                (click)="onSearch($event, 'filter_date_reset')"
+                (blur)="onSearch($event, 'filter_date')"
+                (dateSelect)="onSearch($event, 'filter_date')"
+                formControlName="filter_date"
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="filter_date"
+                [(ngModel)]="filter_date_m"
+                ngbDatepicker
+                #filter_date="ngbDatepicker"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="filter_date.toggle()"
+                  type="button"
+                >
+                  <i class="fas fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+          </th>
+          <th scope="col" width="20%"></th>
+          <th scope="col" width="20%"></th>
+          <th scope="col" width="20%">
+            <select
+              class="form-control"
+              (change)="onSearch($event, 'status')"
+              formControlName="status"
+            >
+              <option value="">--Any--</option>
+              <option value="0">In Progress</option>
+              <option value="1">Scheduled</option>
+              <option value="2">Final</option>
+            </select>
+          </th>
+          <th scope="col" width="20%"></th>
+          <th scope="col" width="1%" *ngIf="role == 1">
+            <div class="btn btn-secondary">Clear</div>
+          </th>
+        </tr> -->
+        <tr *ngFor="let t of games">
+          <td>
+            <a routerLink="{{ '/admin/play/entry/' + t._id }}">{{
+              t.schedule | date:'medium'
+            }}</a>
+          </td>
+          <td style="text-align: center">
+            <img height="45" [src]="t.AwayTeam.WikipediaLogoUrl" />
+          </td>
+          <td style="text-align: center">
+            <img height="45" [src]="t.HomeTeam.WikipediaLogoUrl" />
+          </td>
+          <td>{{ statuses[t.status] }}</td>
+          <td>
+            {{
+              t.Operators.length > 0 &&
+              t.Operators[0].first_name &&
+              t.Operators[0].last_name
+                ? t.Operators[0].first_name + " " + t.Operators[0].last_name
+                : "Not Assigned"
+            }}
+          </td>
+          <td>
+            {{
+              t.betting_line != 0 ? t.betting_line : "Default"
+            }}
+          </td>
+          <td *ngIf="role == 1">
+            <a
+              placement="top"
+              ngbTooltip="Edit"
+              class="edit-link text-primary"
+              (click)="editGame(t, data_popup)"
+              ><i class="fas fa-pencil-alt" *ngIf="t.status == 0"></i
+            ></a>
+            <a
+              placement="top"
+              ngbTooltip="Delete"
+              class="text-danger btn_delete"
+              (click)="deleteItem(t, delete_popup)"
+              ><i class="fas fa-trash-alt" *ngIf="t.status == 0"></i
+            ></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pager" *ngIf="games">
+      <div *ngIf="onProgress" class="data-loader">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span class="lbl">Loading...</span>
+      </div>
+      <a
+        class="btn btn-light more"
+        *ngIf="!onProgress && !isMaxLoad"
+        (click)="onLoadMore()"
+        >Load More</a
+      >
+    </div>
+    <!--end of pager-->
+  </div>
+  <!--end-->
+</div>
+<!--end-->
+
+<ng-template #data_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ method == "add" ? "Add" : "Edit" }}
+    </h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert
+      *ngIf="coreService.showAlert"
+      [type]="coreService.alert.type"
+      (close)="coreService.closeAlert()"
+    >
+      {{ coreService.alert.message }}</ngb-alert
+    >
+
+    <form [formGroup]="data_form" class="form_data">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name">Assign to:</label>
+            <select formControlName="assigned_to" class="form-control">
+              <option *ngFor="let o of operators" [value]="o._id">
+                {{ o.first_name }} {{ o.last_name }}
+              </option>
+            </select>
+          </div>
+          <!--end-->
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name">Betting Line</label>
+            <input type="text" class="form-control" formControlName="betting_line">
+          </div>
+          <!--end-->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name">Away Team <span class="req">*</span> </label>
+            <select formControlName="away_team" class="form-control">
+              <option *ngFor="let t of teams" [value]="t._id">
+                {{ t.Name }} ({{ t.Key }})
+              </option>
+            </select>
+            <p
+              *ngIf="
+                !data_form.get('away_team').valid &&
+                data_form.get('away_team').touched
+              "
+              class="help-block error"
+            >
+              Away Team is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="first_name"
+              >Home Team <span class="req">*</span>
+            </label>
+            <select formControlName="home_team" class="form-control">
+              <option *ngFor="let t of teams" [value]="t._id">
+                {{ t.Name }} ({{ t.Key }})
+              </option>
+            </select>
+            <p
+              *ngIf="
+                !data_form.get('home_team').valid &&
+                data_form.get('home_team').touched
+              "
+              class="help-block error"
+            >
+              Home Team is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label>Schedule Date & Time <span class="req">*</span> </label>
+          <div class="input-group">
+            <input
+              formControlName="schedule_date"
+              class="form-control"
+              placeholder="mm-dd-yyyy"
+              name="schedule_date"
+              ngbDatepicker
+              firstDayOfWeek="7"
+              #filter_date="ngbDatepicker"
+            />
+            <div class="input-group-append">
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                (click)="filter_date.toggle()"
+              >
+                <i class="fas fa-calendar-alt"></i>
+              </button>
+            </div>
+          </div>
+
+          <p
+            *ngIf="
+              !data_form.get('schedule_date').valid &&
+              data_form.get('schedule_date').touched
+            "
+            class="help-block error"
+          >
+            Date is required
+          </p>
+          <!---end-->
+        </div>
+        <!--end-->
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <ngb-timepicker formControlName="schedule_time" [meridian]="true"></ngb-timepicker>
+          <!-- <p
+            *ngIf="
+              !data_form.get('schedule_time').valid &&
+              data_form.get('schedule_time').touched
+            "
+            class="help-block error"
+          >
+            Time is required
+          </p> -->
+        </div>
+
+        <!--end-->
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress || !data_form.valid"
+      type="button"
+      class="btn btn-primary"
+      (click)="onSave()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Saving..." : "Save" }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Delete Confirmation</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">Do you really want to remove?</div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+    >
+      No
+    </button>
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-primary"
+      (click)="onDelete()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Removing..." : "Yes" }}
+    </button>
+  </div>
+</ng-template>

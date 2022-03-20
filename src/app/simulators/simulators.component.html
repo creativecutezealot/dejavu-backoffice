@@ -1,0 +1,93 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1>Simulator</h1>
+        <hr/>
+    </div>
+</div>
+<div class="row r-controls" [formGroup]="dataForm">
+  <div class="col-md-4">
+      <label>Game<span class="req">*</span></label>
+      <select #selected_game (change)="onChangeGame()" [attr.disabled]="isPlaying?'':null" class="form-control" formControlName="games">
+          <option value="">--Select--</option>
+          <option *ngIf="!games" value="">Loading Games...</option>
+          <!--<option [value]="g.games._id" *ngFor="let g of games">[{{g.games.GameID}}] {{g.games.HomeTeam}} [{{g.games.HomeTeamRuns}}] vs {{g.games.AwayTeam}} [{{g.games.AwayTeamRuns}}]</option>-->
+          <option [value]="g._id" *ngFor="let g of games">[{{g.GameID}}] {{g.HomeTeam}} [{{g.HomeTeamRuns}}] vs {{g.AwayTeam}} [{{g.AwayTeamRuns}}]</option>
+      </select>
+   </div><!--end--->
+   <div class="col-md-2">
+    <label>Mode<span class="req">*</span></label>
+    <select class="form-control" formControlName="mode" [attr.disabled]="isPlaying?'':null" #mode>
+        <option value="">--Select--</option>
+        <option value="auto">Auto</option>
+        <option value="manual">Manual</option>
+    </select>
+   </div>
+   <div class="col-md-2" *ngIf="mode.value=='auto'">    
+    <label>Interval<span class="req">*</span></label>
+    <select [attr.disabled]="isPlaying?'':null" class="form-control" formControlName="interval">
+        <option value="">--Select--</option>
+      <!--<option value="1">1 sec</option>
+        <option value="5">5 sec</option>-->
+        <option value="10">10 sec</option>
+        <option value="15">15 sec</option>
+        <option value="20">20 sec</option>
+        <option value="30">30 sec</option>
+        <option value="60">60 sec</option>
+        <option value="90">90 sec</option>
+        <option value="120">2 Mins</option>
+        <option value="300">5 Mins</option>
+    </select>
+    </div><!--end--->
+    <div class="col-md-2" style="display:none;">
+     
+        <label>Start Play<span class="req">*</span></label>
+        <input (keyup)="updateSelectedPlay($event)" [value]="selectedPlayIndex" formControlName="selectedPlayIndex" class="form-control"/>
+    </div><!--end--->
+    <div class="col-md-4">
+        <input [disabled]="!dataForm.valid" type="submit" name="submit" (click)="onPlay($event)" class="btn btn-primary btn-play" [value]="isPlaying?'Pause':'Play'"/>
+        <input *ngIf="isPlaying" type="submit" name="submit" (click)="onStop()" class="btn btn-danger btn-stop" value="Stop"/>
+    </div><!--end-->
+</div><!---->
+
+
+<div class="row" *ngIf="plays">
+    <div class="col-md-12">
+      
+        <span *ngIf="isPlaying && mode.value=='auto'">Time Remaining Before Sending Plays: {{intervalTimeCounterIndex}}</span>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>PlayID</th>
+                    <th>Inning / InningHalf</th>
+                    <th>Results</th>
+                    <th>Description</th>
+                    <th>Outs</th>
+                    <th>NumberOfOutsOnPlay</th>
+                    <th>Strikes</th>
+                    <th>Ball</th>
+                    <th>Runner1ID</th>
+                    <th width="150" *ngIf="mode.value=='manual'"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let p of plays;let i=index;" [id]="'p'+i" class="">
+                    <td>{{(i+1)}}</td>
+                    <td>{{p.PlayID}}</td>
+                    <td>{{!p.change_inning_half?p.InningNumber+"/"+p.InningHalf:"Change Inning/InningHalf"}}</td>
+                    <td>{{p.Result}}</td>
+                    <td>{{p.Description}}</td>
+                    <td>{{p.Outs}}</td>
+                    <td>{{p.NumberOfOutsOnPlay}}</td>
+                    <td>{{p.Strikes}}</td>
+                    <td>{{p.Balls}}</td>
+                    <td>{{p.Runner1ID}}</td>
+                    <td *ngIf="mode.value=='manual'">
+                        <!--*ngIf="i==selectedPlayIndex"-->
+                        <a  (click)="onNextPlay(i)" class="btn btn-primary">Next Play</a>
+                    </td>
+                </tr>
+            </tbody>    
+        </table>
+    </div>
+</div>

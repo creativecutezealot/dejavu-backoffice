@@ -1,0 +1,261 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>
+      Players
+      <div class="filter-heading">
+        <form [formGroup]="filter_form">
+          <input
+            type="text"
+            (keyup)="onSearch($event)"
+            class="form-control"
+            placeholder="search..."
+            formControlName="q"
+          />
+        </form>
+      </div>
+    </h1>
+    <hr />
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <div class="top-buttons">
+      <!-- <a (click)="onResync()" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Re-Sync</a> -->
+      <a (click)="addItem(data_popup)" class="btn btn-primary"
+        ><i class="fas fa-plus"></i> Add</a
+      >
+    </div>
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col" width="1%">PlayerID</th>
+          <th scope="col" width="1%">Photo</th>
+          <th scope="col" width="20%">Name</th>
+          <th scope="col" width="20%">Team</th>
+          <th scope="col" width="20%">Status</th>
+          <th scope="col" width="20%">Jersey</th>
+          <th scope="col" width="20%">Position</th>
+          <th scope="col" width="1%">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data">
+          <td>{{ item.PlayerID }}</td>
+          <td style="text-align: center">
+            <img height="45" [src]="item.PhotoUrl" />
+          </td>
+          <td>{{ item.FirstName }} {{ item.LastName }}</td>
+          <td>{{ item.Team }}</td>
+          <td>{{ item.Status }}</td>
+          <td>{{ item.Jersey }}</td>
+          <td>{{ item.Position }}</td>
+          <td>
+            <a
+              placement="top"
+              ngbTooltip="Edit"
+              class="edit-link text-primary"
+              (click)="editItem(item, data_popup)"
+              ><i class="fas fa-pencil-alt"></i
+            ></a>
+            <a
+              placement="top"
+              ngbTooltip="Delete"
+              class="text-danger btn_delete"
+              (click)="deleteItem(item, delete_popup)"
+              ><i class="fas fa-trash-alt"></i
+            ></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pager" *ngIf="data">
+      <div *ngIf="onProgress" class="data-loader">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span class="lbl">Loading...</span>
+      </div>
+      <a
+        class="btn btn-light more"
+        *ngIf="!onProgress && !isMaxLoad"
+        (click)="onLoadMore()"
+        >Load More</a
+      >
+    </div>
+    <!--end of pager-->
+  </div>
+  <!--end-->
+</div>
+<!--end-->
+
+<ng-template #data_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+      {{ method == "add" ? "Add" : "Edit" }}
+    </h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ngb-alert
+      *ngIf="coreService.showAlert"
+      [type]="coreService.alert.type"
+      (close)="coreService.closeAlert()"
+    >
+      {{ coreService.alert.message }}</ngb-alert
+    >
+
+    <form [formGroup]="itemForm" class="form_data">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label>Team <span class="req">*</span> </label>
+            <select formControlName="key" class="form-control" (change)="selectTeam($event)">
+              <option *ngFor="let t of teams" [value]="t.Key">
+                {{ t.Name }} ({{ t.Key }})
+              </option>
+            </select>
+            <p
+              *ngIf="
+                !itemForm.get('key').valid && itemForm.get('key').touched
+              "
+              class="help-block error"
+            >
+              Team is required
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="first_name">First Name <span class="req">*</span> </label>
+            <input type="text" formControlName="first_name" class="form-control" />
+            <p
+              *ngIf="
+                !itemForm.get('first_name').valid && itemForm.get('first_name').touched
+              "
+              class="help-block error"
+            >
+              First Name is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name"
+              >Last Name <span class="req">*</span>
+            </label>
+            <input type="text" formControlName="last_name" class="form-control" />
+            <p
+              *ngIf="!itemForm.get('last_name').valid && itemForm.get('last_name').touched"
+              class="help-block error"
+            >
+              Last Name is required
+            </p>
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="first_name">Jersey Number </label>
+            <input type="text" formControlName="jersey" class="form-control" />
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="last_name"
+              >Position
+            </label>
+            <input type="text" formControlName="position" class="form-control" />
+          </div>
+          <!--end-->
+        </div>
+        <!---end-->
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" formControlName="image" class="form-control" />
+          </div>
+          <!--end-->
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress || !itemForm.valid"
+      type="button"
+      class="btn btn-primary"
+      (click)="onSave()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Saving..." : "Save" }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #delete_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Delete Confirmation</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">Do you really want to remove?</div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+    >
+      No
+    </button>
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-primary"
+      (click)="onDelete()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Removing..." : "Yes" }}
+    </button>
+  </div>
+</ng-template>

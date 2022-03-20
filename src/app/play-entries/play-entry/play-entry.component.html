@@ -1,0 +1,1125 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>Play Entry</h1>
+    <hr />
+  </div>
+</div>
+<!--end-->
+<div class="row">
+  <div class="col-md-12">
+    <div *ngIf="onProgress" class="data-loader">
+      <div class="spinner-grow text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <span class="lbl">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="players">
+  <div class="col-md-8 player-list" *ngIf="currentGame">
+    <form [formGroup]="playForm" (ngSubmit)="submitPlay()">
+      <h3>Current Status</h3>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <button
+            type="button"
+            class="btn btn-danger btn-block mr-1"
+            (click)="inningOver($event)"
+          >
+            INNING OVER
+          </button>
+        </div>
+      </div>
+      <!-- <div class="row mb-2">
+        <div class="col-md-12">
+          <button
+            type="button"
+            class="btn btn-info btn-block mr-1"
+            (click)="undoOnce()"
+          >
+            UNDO
+          </button>
+        </div>
+      </div> -->
+      <select
+        class="form-control"
+        formControlName="game_status"
+        [ngClass]="{
+          'border-warning bg-warning':
+            fc.game_status.value != currentGame.Status
+        }"
+      >
+        <option value="Scheduled">Scheduled</option>
+        <option value="InProgress">InProgress</option>
+        <option value="Final">Final</option>
+      </select>
+
+      <div
+        class="alert alert-warning mt-1"
+        *ngIf="currentGame && currentGame.Status == 'Scheduled'"
+      >
+        To enable this game into the app please update the status from
+        "Scheduled" to "InProgress".
+      </div>
+      <div class="play-box mt-2">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="">Betting Line:</label>
+            <div class="input-group mb-1">
+              <input
+                type="text"
+                class="form-control text-center"
+                formControlName="betting_line"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    currentGame.BettingLine != fc.betting_line.value
+                }"
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="">No More Bets:</label>
+            <div class="input-group mb-1">
+              <select
+                class="form-control"
+                formControlName="lock_bet"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    fc.lock_bet.value != currentGame.LockBet
+                }"
+                (change)="checkValue($event)"
+              >
+                <option value="false">Disable</option>
+                <option value="true">Enable</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="">{{ awayTeam.Key }}</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="subNumber($event, 'score_a')"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                formControlName="score_a"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    currentGame.AwayTeamRuns != fc.score_a.value
+                }"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="addNumber($event, 'score_a')"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="">{{ homeTeam.Key }}</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="subNumber($event, 'score_b')"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    currentGame.HomeTeamRuns != fc.score_b.value
+                }"
+                formControlName="score_b"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="addNumber($event, 'score_b')"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row align-items-end">
+          <div class="col-md-4">
+            <label for="">Balls</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="subNumber($event, 'balls')"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    currentGame.Balls != fc.balls.value
+                }"
+                formControlName="balls"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="addNumber($event, 'balls')"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 text-center">
+            <label for=""></label>
+            <div class="mb-1" style="display: inline-flex">
+              <button
+                class="btn btn-outline-secondary mr-1"
+                type="button"
+                (click)="resetBS($event)"
+              >
+                RESET
+              </button>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-block mr-1"
+                [disabled]="isSubmitted"
+              >
+                <span
+                  *ngIf="onProgress"
+                  class="spinner-grow spinner-grow-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                {{
+                  onProgress
+                    ? "UPDATING"
+                    : isSubmitted
+                    ? "Available in " + btnCounter
+                    : "UPDATE"
+                }}
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label for="">Strikes</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="subNumber($event, 'strikes')"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    currentGame.Strikes != fc.strikes.value
+                }"
+                formControlName="strikes"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="addNumber($event, 'strikes')"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label>Inning</label>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <input
+                  type="text"
+                  class="form-control text-center"
+                  [ngClass]="{
+                    'border-warning bg-warning':
+                      currentGame.Inning != fc.inning_number.value
+                  }"
+                  formControlName="inning_number"
+                />
+              </div>
+              <div class="form-group col-md-6">
+                <select
+                  id="inputState"
+                  class="form-control"
+                  [ngClass]="{
+                    'border-warning bg-warning':
+                      currentGame.InningHalf != fc.inning_half.value
+                  }"
+                  formControlName="inning_half"
+                >
+                  <option value="T">T</option>
+                  <option value="B">B</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="">Outs</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="subNumber($event, 'outs')"
+                >
+                  -
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control text-center"
+                [ngClass]="{
+                  'border-warning bg-warning': currentGame.Outs != fc.outs.value
+                }"
+                formControlName="outs"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="addNumber($event, 'outs')"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label
+              class="font-weight-bold"
+              [ngClass]="{ 'text-danger': !currentBatter }"
+              >At Bat:
+              {{
+                currentBatter && currentBatter.Player
+                  ? currentBatter.Player.FirstName +
+                    " " +
+                    currentBatter.Player.LastName
+                  : " Please set up batters."
+              }}</label
+            >
+            <p class="text-danger" *ngIf="runnerOnBat">
+              {{ moveRunnerMessage }}
+            </p>
+            <div class="mt-1">
+              <button
+                type="button"
+                class="btn btn-info btn-sm mr-1"
+                (click)="moveRunner($event, 0, 1)"
+              >
+                To 1st
+              </button>
+              <button
+                type="button"
+                class="btn btn-blue btn-sm mr-1"
+                (click)="moveRunner($event, 0, 2)"
+              >
+                To 2nd
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="moveRunner($event, 0, 3)"
+              >
+                To 3rd
+              </button>
+            </div>
+          </div>
+        </div>
+
+        
+
+        <div
+          class="mt-1 font-weight-bold"
+          *ngIf="currentGame && currentGame.LastPlay"
+        >
+          {{ "Last Play: " + currentGame.LastPlay }}
+        </div>
+
+        <div class="mt-1" *ngIf="gameCache && gameCache.length > 1">
+          <div ngbDropdown class="d-inline-block">
+            <button
+              (click)="seeMore($event)"
+              id="undoDropDown"
+              class="btn btn-outline-secondary"
+              ngbDropdownToggle
+            >
+              Undo
+            </button>
+            <div ngbDropdownMenu aria-labelledby="undoDropDown" >
+              <div 
+              *ngFor="let g of gameCache"
+              >
+              <button
+                ngbDropdownItem
+                (click)="selectPlayToUndo($event, g, delete_popup)"
+                *ngIf="g.Games.LastPlay != currentGame.LastPlay"
+              >
+              {{ g.Games.LastPlay == '' ? 'Start' : g.Games.LastPlay }}
+              </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="alert alert-warning mt-1"
+            *ngIf="undoError"
+          >
+            Sorry, you can't undo the previous inning.
+          </div>
+          
+        </div>
+        
+
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <label>Play Result</label>
+            <div class="mt-1"  *ngFor="let p of playResultsOpen">
+              <button
+                type="button"
+                class="btn btn-sm mr-1 mb-1"
+                *ngFor="let i of p.item"
+                [ngClass]="
+                  selectedResult && i.result == selectedResult
+                    ? 'btn-success'
+                    : 'btn-secondary'
+                "
+                (click)="selectResult($event, i.result, i)"
+              >
+                {{ i.result }}
+              </button>
+            </div>
+
+            <div class="mt-1">
+              <div ngbDropdown class="d-inline-block">
+                <button
+                  (click)="seeMore($event)"
+                  [ngClass]="
+                  selectedResultData && selectedResultData.isDropDown
+                    ? 'btn btn-success'
+                    : 'btn btn-outline-secondary'
+                  "
+                  id="dropdownBasic1"
+                  ngbDropdownToggle
+                >
+                  {{ selectedResultData && selectedResultData.isDropDown ? selectedResult : 'See More' }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" *ngFor="let p of playResultsDropDown">
+                  <button
+                    ngbDropdownItem
+                    *ngFor="let i of p.item"
+                    (click)="selectResult($event, i.result, i)"
+                  >
+                    {{ i.result }}
+                  </button>
+                </div>
+              </div>
+              <ngb-alert [dismissible]="false" *ngIf="selectedResultData && selectedResultData.prompt" class="mt-1">{{ selectedResultData.prompt }}</ngb-alert>
+              
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <label>Play Description</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend"></div>
+              <textarea
+                class="form-control"
+                [ngClass]="{
+                  'border-warning bg-warning': fc.description.value != ''
+                }"
+                formControlName="description"
+              >
+              </textarea>
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="clear($event, 'description')"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <label>On First</label>
+
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    fc.runneron_first.value != currentGame.RunnerOnFirstName
+                }"
+                formControlName="runneron_first"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="clear($event, 'runneron_first')"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-1">
+              <button
+                type="button"
+                class="btn btn-blue btn-sm mr-1"
+                (click)="moveRunner($event, 1, 2)"
+              >
+                To 2nd
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm mr-1"
+                (click)="moveRunner($event, 1, 3)"
+              >
+                To 3rd
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm mr-1"
+                (click)="out($event, 1)"
+              >
+                Out
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-sm mr-1"
+                (click)="scored($event, 1)"
+              >
+                Scored
+              </button>
+            </div>
+
+            <p class="text-danger" *ngIf="runnerOnFirstError">
+              {{ moveRunnerMessage }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <label>On Second</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    fc.runneron_second.value != currentGame.RunnerOnSecondName
+                }"
+                formControlName="runneron_second"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="clear($event, 'runneron_second')"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div class="mt-1">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm mr-1"
+                (click)="moveRunner($event, 2, 3)"
+              >
+                To 3rd
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm mr-1"
+                (click)="out($event, 2)"
+              >
+                Out
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-sm mr-1"
+                (click)="scored($event, 2)"
+              >
+                Scored
+              </button>
+            </div>
+
+            <p class="text-danger" *ngIf="runnerOnSecondError">
+              {{ moveRunnerMessage }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label>On Third</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="{
+                  'border-warning bg-warning':
+                    fc.runneron_third.value != currentGame.RunnerOnThirdName
+                }"
+                formControlName="runneron_third"
+              />
+              <div class="input-group-append">
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="clear($event, 'runneron_third')"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+            <div class="mt-1">
+              <button
+                type="button"
+                class="btn btn-danger btn-sm mr-1"
+                (click)="out($event, 3)"
+              >
+                Out
+              </button>
+              <button
+                type="button"
+                class="btn btn-success btn-sm mr-1"
+                (click)="scored($event, 3)"
+              >
+                Scored
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-2">
+          <div class="col-md-12">
+            <button
+              type="submit"
+              class="btn btn-primary btn-block mr-1"
+              [disabled]="isSubmitted"
+            >
+              <span
+                *ngIf="onProgress"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{
+                onProgress
+                  ? "UPDATING"
+                  : isSubmitted
+                  ? "Available in " + btnCounter
+                  : "UPDATE"
+              }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-4 player-list">
+    <h3>Current Batter Team:</h3>
+
+    <select class="custom-select" (change)="selectTeamBatter($event)">
+      <option
+        value="away"
+        selected="{{ currentBatterTeam == 'away' ? 'selected' : '' }}"
+      >
+        {{ awayTeam.Name }}
+      </option>
+      <option
+        value="home"
+        selected="{{ currentBatterTeam == 'home' ? 'selected' : '' }}"
+      >
+        {{ homeTeam.Name }}
+      </option>
+    </select>
+    <!-- <h3>{{ awayTeam.Name }}</h3>
+      <ul class="list-group" *ngFor="let ateam of awayTeamPlayers">
+        <li class="list-group-item">
+          {{ ateam.FirstName }} {{ ateam.LastName }}
+        </li>
+      </ul>
+
+      <h3>{{ homeTeam.Name }} ({{ homeTeam.Key }})</h3>
+      <ul class="list-group" *ngFor="let hteam of homeTeamPlayers">
+        <li class="list-group-item">
+          {{ hteam.FirstName }} {{ hteam.LastName }}
+        </li>
+      </ul> -->
+    <hr />
+    
+    <!-- Pitcher Away -->
+    <div class="row mt-3">
+      <div class="col-sm-12">
+        <h3>{{ awayTeam.Name }} (Pitcher)</h3>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectPlayer($event)">
+              <ng-option *ngFor="let a of awayTeamPlayers" [value]="a._id">
+                {{ a.FirstName }} {{ a.LastName }} - {{ a.Team }}</ng-option
+              >
+            </ng-select>
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addPitcher()"
+            >
+              <span
+                *ngIf="onProgressAddPitcher"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddPitcher ? "" : "Add" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3" *ngIf="awayPitchers.length > 0">
+      <div class="col-sm-12">
+        <ul
+          cdkDropList
+          class="list-group"
+          (cdkDropListDropped)="dropAwayPitcher($event)"
+        >
+          <li
+            class="list-group-item"
+            cdkDrag
+            *ngFor="let b of awayPitchers; let i = index"
+          >
+            <div class="row">
+              <div class="col-8">
+                {{ b.Player.FirstName }} {{ b.Player.LastName }} ({{
+                  b.Player.Team
+                }})
+              </div>
+              <div class="col-4 text-right">
+                <!-- <a
+                  placement="top"
+                  ngbTooltip="move down"
+                  (click)="moveDown(i, 'away')"
+                  ><i class="fas fa-arrow-down mr-1"></i
+                ></a>
+                <a placement="top" ngbTooltip="move up"
+                  ><i
+                    class="fas fa-arrow-up mr-1"
+                    (click)="moveUp(i, 'away')"
+                  ></i
+                ></a> -->
+                <a
+                  placement="top"
+                  ngbTooltip="remove"
+                  (click)="removePitcher(b._id)"
+                  ><i class="fas fa-times"></i
+                ></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Batters -->
+    <div class="row mt-3">
+      <div class="col-sm-12">
+        <h3>{{ awayTeam.Name }} (Batters)</h3>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="row mb-1">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectLineup($event, 'awayteam')">
+              <ng-option *ngFor="let a of awayTeamLineups" [value]="a._id">
+                {{ a.Name }} </ng-option
+              >
+            </ng-select>
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addLineupToBatterList()"
+            >
+              <span
+                *ngIf="onProgressAddLineup"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddLineup ? "" : "Lineup" }}
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectPlayer($event)">
+              <ng-option *ngFor="let a of awayTeamPlayers" [value]="a._id">
+                {{ a.FirstName }} {{ a.LastName }} - {{ a.Team }}</ng-option
+              >
+            </ng-select>
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addBatter()"
+            >
+              <span
+                *ngIf="onProgressAddBatter"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddBatter ? "" : "Add" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3" *ngIf="awayBatters.length > 0">
+      <div class="col-sm-12">
+        <ul
+          cdkDropList
+          class="list-group"
+          (cdkDropListDropped)="dropAway($event)"
+        >
+          <li
+            class="list-group-item"
+            cdkDrag
+            *ngFor="let b of awayBatters; let i = index"
+          >
+            <div class="row">
+              <div class="col-8">
+                {{ b.Player.FirstName }} {{ b.Player.LastName }} ({{
+                  b.Player.Team
+                }})
+              </div>
+              <div class="col-4 text-right">
+                <!-- <a
+                  placement="top"
+                  ngbTooltip="move down"
+                  (click)="moveDown(i, 'away')"
+                  ><i class="fas fa-arrow-down mr-1"></i
+                ></a>
+                <a placement="top" ngbTooltip="move up"
+                  ><i
+                    class="fas fa-arrow-up mr-1"
+                    (click)="moveUp(i, 'away')"
+                  ></i
+                ></a> -->
+                <a
+                  placement="top"
+                  ngbTooltip="remove"
+                  (click)="removeBatter(b._id)"
+                  ><i class="fas fa-times"></i
+                ></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pitcher Home -->
+    <div class="row mt-3">
+      <div class="col-sm-12">
+        <h3>{{ homeTeam.Name }} (Pitcher)</h3>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectPlayer($event)">
+              <ng-option *ngFor="let a of homeTeamPlayers" [value]="a._id">
+                {{ a.FirstName }} {{ a.LastName }} - {{ a.Team }}</ng-option
+              >
+            </ng-select>
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addPitcher()"
+            >
+              <span
+                *ngIf="onProgressAddPitcher"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddPitcher ? "" : "Add" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3" *ngIf="homePitchers.length > 0">
+      <div class="col-sm-12">
+        <ul
+          cdkDropList
+          class="list-group"
+          (cdkDropListDropped)="dropHomePitcher($event)"
+        >
+          <li
+            class="list-group-item"
+            cdkDrag
+            *ngFor="let b of homePitchers; let i = index"
+          >
+            <div class="row">
+              <div class="col-8">
+                {{ b.Player.FirstName }} {{ b.Player.LastName }} ({{
+                  b.Player.Team
+                }})
+              </div>
+              <div class="col-4 text-right">
+                <!-- <a
+                  placement="top"
+                  ngbTooltip="move down"
+                  (click)="moveDown(i, 'away')"
+                  ><i class="fas fa-arrow-down mr-1"></i
+                ></a>
+                <a placement="top" ngbTooltip="move up"
+                  ><i
+                    class="fas fa-arrow-up mr-1"
+                    (click)="moveUp(i, 'away')"
+                  ></i
+                ></a> -->
+                <a
+                  placement="top"
+                  ngbTooltip="remove"
+                  (click)="removePitcher(b._id)"
+                  ><i class="fas fa-times"></i
+                ></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h3>{{ homeTeam.Name }} (Batters)</h3>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <div class="row mb-1">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectLineup($event, 'hometeam')">
+              <ng-option *ngFor="let a of homeTeamLineups" [value]="a._id">
+                {{ a.Name }} </ng-option
+              >
+            </ng-select>
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addLineupToBatterList()"
+            >
+              <span
+                *ngIf="onProgressAddLineup"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddLineup ? "" : "Lineup" }}
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8 pr-1">
+            <ng-select [searchable]="true" (change)="selectPlayer($event)">
+              <ng-option *ngFor="let a of homeTeamPlayers" [value]="a._id">
+                {{ a.FirstName }} {{ a.LastName }} - {{ a.Team }}</ng-option
+              >
+            </ng-select>
+            <!-- <input list="homeTeamList" value="" class="form-control" (change)="selectPlayer($event)">
+            <datalist id="homeTeamList">
+              <option *ngFor="let a of homeTeamPlayers" [value]="a._id" data-value="{{ a.FirstName }} {{ a.LastName }} - {{ a.Team }}">
+              </option>
+            </datalist> -->
+          </div>
+          <div class="col-4 pl-1 pr-1">
+            <button
+              type="button"
+              class="btn btn-info btn-block"
+              (click)="addBatter()"
+            >
+              <span
+                *ngIf="onProgressAddBatter"
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ onProgressAddBatter ? "" : "Add" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3" *ngIf="homeBatters.length > 0">
+      <div class="col-sm-12">
+        <ul
+          cdkDropList
+          class="list-group"
+          (cdkDropListDropped)="dropHome($event)"
+        >
+          <li
+            class="list-group-item"
+            cdkDrag
+            *ngFor="let b of homeBatters; let i = index"
+          >
+            <div class="row">
+              <div class="col-8">
+                {{ b.Player.FirstName }} {{ b.Player.LastName }} ({{
+                  b.Player.Team
+                }})
+              </div>
+              <div class="col-4 text-right">
+                <!-- <a
+                  placement="top"
+                  ngbTooltip="move down"
+                  (click)="moveDown(i, 'home')"
+                  ><i class="fas fa-arrow-down mr-1"></i
+                ></a>
+                <a placement="top" ngbTooltip="move up"
+                  ><i
+                    class="fas fa-arrow-up mr-1"
+                    (click)="moveUp(i, 'home')"
+                  ></i
+                ></a> -->
+                <a
+                  placement="top"
+                  ngbTooltip="remove"
+                  (click)="removeBatter(b._id)"
+                  ><i class="fas fa-times"></i
+                ></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #delete_popup let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Confirmation</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">Do you really want to undo to this play ({{ selectedUndoPlay.Games.LastPlay }})?</div>
+  <div class="modal-footer">
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-secondary"
+      (click)="onCancel()"
+    >
+      No
+    </button>
+    <button
+      [disabled]="onProgress"
+      type="button"
+      class="btn btn-primary"
+      (click)="onUndo()"
+    >
+      <span
+        *ngIf="onProgress"
+        class="spinner-grow spinner-grow-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ onProgress ? "Updating..." : "Yes" }}
+    </button>
+  </div>
+</ng-template>
